@@ -1,0 +1,53 @@
+name: Deploy Audit Contract (Fuji Testnet)
+
+# Deliberately manual-only (workflow_dispatch) — a blockchain deployment
+# should never happen automatically on every merge to main. Triggered by
+# a human from the Actions tab when they actually want to (re)deploy.
+on:
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    name: Deploy to Avalanche Fuji
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: contracts
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: contracts/package-lock.json
+
+      - name: Check required secrets are configured
+        run: |
+          if [ -z "${{ secrets.CHAIN_PRIVATE_KEY }}" ]; then
+            echo "::error::CHAIN_PRIVATE_KEY secret is not set. Add a Fuji-funded"
+            echo "::error::testnet wallet's private key under Settings → Secrets"
+            echo "::error::before running this workflow. Never use a mainnet key."
+            exit 1
+          fi
+
+      - name: Install
+        run: npm ci
+
+      - name: Compile
+        run: npm run compile
+
+      - name: Test before deploying (never deploy untested bytecode)
+        run: npx hardhat test --no-compile
+
+      - name: Deploy to Fuji
+        env:
+          CHAIN_RPC_URL: ${{ secrets.CHAIN_RPC_URL || 'https://api.avax-test.network/ext/bc/C/rpc' }}
+          CHAIN_PRIVATE_KEY: ${{ secrets.CHAIN_PRIVATE_KEY }}
+        run: npx hardhat run scripts/deploy.ts --network fuji
+
+      - name: Upload deployment record
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuji-deployment
+          path: contracts/deployments.fuji.json
