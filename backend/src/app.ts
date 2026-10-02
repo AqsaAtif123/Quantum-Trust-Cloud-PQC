@@ -6,20 +6,20 @@ import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import pinoHttp from 'pino-http';
 
-import { env } from './config/env';
-import { logger } from './utils/logger';
-import { notFoundHandler, errorHandler } from './middleware/errorHandler';
+import { env } from './config/env.js';
+import { logger } from './utils/logger.js';
+import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 
-import healthRoutes from './routes/health.routes';
-import authRoutes from './routes/auth.routes';
-import filesRoutes from './routes/files.routes';
-import foldersRoutes from './routes/folders.routes';
-import roomsRoutes from './routes/rooms.routes';
-import usersRoutes from './routes/users.routes';
-import vaultRoutes from './routes/vault.routes';
-import paymentsRoutes from './routes/payments.routes';
-import securityRoutes from './routes/security.routes';
-import notificationsRoutes from './routes/notifications.routes';
+import healthRoutes from './routes/health.routes.js';
+import authRoutes from './routes/auth.routes.js';
+import filesRoutes from './routes/files.routes.js';
+import foldersRoutes from './routes/folders.routes.js';
+import roomsRoutes from './routes/rooms.routes.js';
+import usersRoutes from './routes/users.routes.js';
+import vaultRoutes from './routes/vault.routes.js';
+import paymentsRoutes from './routes/payments.routes.js';
+import securityRoutes from './routes/security.routes.js';
+import notificationsRoutes from './routes/notifications.routes.js';
 
 export function createApp(): Express {
   const app = express();
