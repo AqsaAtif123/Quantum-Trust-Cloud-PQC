@@ -108,7 +108,7 @@ export function requireResourceAccess<T extends { ownerId: { toString(): string 
 
     // Non-owners must have an explicit, non-expired permission grant.
     // Import is local to avoid a circular dependency with models at module load time.
-    const { Permission } = await import('../models/Permission');
+    const { Permission } = await import('../models/Permission.js');
     const grant = await Permission.findOne({
       resourceId,
       granteeUserId: req.ztx!.userId,
