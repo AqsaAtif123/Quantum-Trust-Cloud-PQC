@@ -1,13 +1,13 @@
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-import { createApp } from './app';
-import { connectDatabase, disconnectDatabase } from './config/db';
-import { env } from './config/env';
-import { logger } from './utils/logger';
-import { verifyAccessToken, VerifiedIdentity } from './services/verifyAccessToken';
-import { RoomMembership } from './models/RoomMembership';
-import { setIO } from './services/realtime/io';
-import { registerVaultExpiryJob } from './jobs/vaultExpiryCheck';
+import { createApp } from './app.js';
+import { connectDatabase, disconnectDatabase } from './config/db.js';
+import { env } from './config/env.js';
+import { logger } from './utils/logger.js';
+import { verifyAccessToken, VerifiedIdentity } from './services/verifyAccessToken.js';
+import { RoomMembership } from './models/RoomMembership.js';
+import { setIO } from './services/realtime/io.js';
+import { registerVaultExpiryJob } from './jobs/vaultExpiryCheck.js';
 
 declare module 'socket.io' {
   interface Socket {
