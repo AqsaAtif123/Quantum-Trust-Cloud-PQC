@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
-import { env } from '../config/env';
-import { logger } from '../utils/logger';
-import auditContractArtifact from '../contracts/QuantumTrustAuditLog.json';
+import { env } from '../config/env.js';
+import { logger } from '../utils/logger.js';
+import auditContractArtifact from '../contracts/QuantumTrustAuditLog.json' with { type: 'json' };
 
 /**
  * BLOCKCHAIN AUDIT LOGGING

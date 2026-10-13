@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { verifyAccessToken } from '../services/verifyAccessToken';
-import { Session } from '../models/Session';
-import { logger } from '../utils/logger';
+import { verifyAccessToken } from '../services/verifyAccessToken.js';
+import { Session } from '../models/Session.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * ZERO-TRUST AUTHORIZATION CONTEXT

@@ -1,7 +1,7 @@
-import { PaymentProvider } from './PaymentProvider';
-import { StablecoinProvider } from './StablecoinProvider';
-import { LocalBankingProvider } from './LocalBankingProvider';
-import { PaymentProviderName } from '../../models/Payment';
+import { PaymentProvider } from './PaymentProvider.js';
+import { StablecoinProvider } from './StablecoinProvider.js';
+import { LocalBankingProvider } from './LocalBankingProvider.js';
+import { PaymentProviderName } from '../../models/Payment.js';
 
 const providers: Record<PaymentProviderName, PaymentProvider> = {
   stablecoin: new StablecoinProvider(),

@@ -1,4 +1,4 @@
-import { PaymentProvider, CreatePaymentResult, VerifyPaymentResult } from './PaymentProvider';
+import { PaymentProvider, CreatePaymentResult, VerifyPaymentResult } from './PaymentProvider.js';
 
 /**
  * Structural placeholder for a regional/local banking payment gateway

@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
-import { env } from '../../config/env';
-import { logger } from '../../utils/logger';
-import { PaymentProvider, CreatePaymentResult, VerifyPaymentResult } from './PaymentProvider';
+import { env } from '../../config/env.js';
+import { logger } from '../../utils/logger.js';
+import { PaymentProvider, CreatePaymentResult, VerifyPaymentResult } from './PaymentProvider.js';
 
 const MIN_CONFIRMATIONS = 3;
 

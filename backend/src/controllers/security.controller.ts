@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-import { User } from '../models/User';
-import { Session } from '../models/Session';
-import { Device } from '../models/Device';
-import { SecurityEvent } from '../models/SecurityEvent';
-import { SecuritySettings, getOrCreateSecuritySettings } from '../models/SecuritySettings';
-import { isBlockchainAuditEnabled } from '../services/blockchainService';
+import { User } from '../models/User.js';
+import { Session } from '../models/Session.js';
+import { Device } from '../models/Device.js';
+import { SecurityEvent } from '../models/SecurityEvent.js';
+import { SecuritySettings, getOrCreateSecuritySettings } from '../models/SecuritySettings.js';
+import { isBlockchainAuditEnabled } from '../services/blockchainService.js';
 
 /**
  * Aggregates real state from across the system into one Security Center

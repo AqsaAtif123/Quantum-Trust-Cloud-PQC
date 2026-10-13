@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Notification } from '../models/Notification';
+import { Notification } from '../models/Notification.js';
 
 export async function listNotifications(req: Request, res: Response): Promise<void> {
   const unreadOnly = req.query.unreadOnly === 'true';

@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware/zeroTrust';
-import * as securityController from '../controllers/security.controller';
+import { requireAuth } from '../middleware/zeroTrust.js';
+import * as securityController from '../controllers/security.controller.js';
 
 const router = Router();
 

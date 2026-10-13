@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
 import { keccak256, toUtf8Bytes } from 'ethers';
-import { Payment, PaymentProviderName } from '../models/Payment';
-import { getPaymentProvider, listAvailableProviders } from '../services/payments';
-import { recordPaymentReferenceOnChain, isBlockchainAuditEnabled } from '../services/blockchainService';
-import { Notification } from '../models/Notification';
-import { getIO } from '../services/realtime/io';
-import { logger } from '../utils/logger';
+import { Payment, PaymentProviderName } from '../models/Payment.js';
+import { getPaymentProvider, listAvailableProviders } from '../services/payments/index.js';
+import { recordPaymentReferenceOnChain, isBlockchainAuditEnabled } from '../services/blockchainService.js';
+import { Notification } from '../models/Notification.js';
+import { getIO } from '../services/realtime/io.js';
+import { logger } from '../utils/logger.js';
 
 const PAYMENT_EXPIRY_MINUTES = 30;
 

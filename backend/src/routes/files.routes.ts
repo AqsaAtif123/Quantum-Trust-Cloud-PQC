@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { requireAuth, requireResourceAccess } from '../middleware/zeroTrust';
-import { FileModel } from '../models/File';
-import * as filesController from '../controllers/files.controller';
+import { requireAuth, requireResourceAccess } from '../middleware/zeroTrust.js';
+import { FileModel } from '../models/File.js';
+import * as filesController from '../controllers/files.controller.js';
 
 const router = Router();
 

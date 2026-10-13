@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-import { User } from '../models/User';
-import { Session } from '../models/Session';
-import { SecurityEvent } from '../models/SecurityEvent';
-import { evaluateNewDeviceLogin, evaluateImpossibleTravel } from '../services/aiCoPilot';
+import { User } from '../models/User.js';
+import { Session } from '../models/Session.js';
+import { SecurityEvent } from '../models/SecurityEvent.js';
+import { evaluateNewDeviceLogin, evaluateImpossibleTravel } from '../services/aiCoPilot.js';
 import {
   hashPassword,
   verifyPassword,
@@ -14,8 +14,8 @@ import {
   verifyMfaToken,
   encryptServerMetadata,
   decryptServerMetadata,
-} from '../services/authService';
-import { logger } from '../utils/logger';
+} from '../services/authService.js';
+import { logger } from '../utils/logger.js';
 
 const registerSchema = z.object({
   email: z.string().email(),

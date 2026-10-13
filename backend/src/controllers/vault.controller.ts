@@ -2,16 +2,16 @@ import { Request, Response } from 'express';
 import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
 import crypto from 'crypto';
-import { VaultDocument, computeVaultStatus } from '../models/VaultDocument';
-import { User } from '../models/User';
-import { getStorageProvider } from '../services/storage';
-import { verifySignature as verifyMlDsaSignature } from '../services/crypto/pqc';
+import { VaultDocument, computeVaultStatus } from '../models/VaultDocument.js';
+import { User } from '../models/User.js';
+import { getStorageProvider } from '../services/storage/index.js';
+import { verifySignature as verifyMlDsaSignature } from '../services/crypto/pqc.js';
 import {
   recordNotarizationOnChain,
   verifyOnChainRecord,
   isBlockchainAuditEnabled,
-} from '../services/blockchainService';
-import { logger } from '../utils/logger';
+} from '../services/blockchainService.js';
+import { logger } from '../utils/logger.js';
 
 const PRESIGN_TTL_SECONDS = 300;
 

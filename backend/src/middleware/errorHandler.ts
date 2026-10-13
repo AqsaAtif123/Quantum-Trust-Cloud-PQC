@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 
 export function notFoundHandler(req: Request, res: Response): void {
   res.status(404).json({ error: 'ROUTE_NOT_FOUND' });

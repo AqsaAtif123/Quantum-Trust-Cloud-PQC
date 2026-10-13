@@ -1,19 +1,19 @@
 import { Request, Response } from 'express';
 import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
-import { FileModel } from '../models/File';
-import { FileVersion } from '../models/FileVersion';
-import { SecurityEvent } from '../models/SecurityEvent';
-import { Permission } from '../models/Permission';
-import { FileShareKey } from '../models/FileShareKey';
-import { getStorageProvider } from '../services/storage';
+import { FileModel } from '../models/File.js';
+import { FileVersion } from '../models/FileVersion.js';
+import { SecurityEvent } from '../models/SecurityEvent.js';
+import { Permission } from '../models/Permission.js';
+import { FileShareKey } from '../models/FileShareKey.js';
+import { getStorageProvider } from '../services/storage/index.js';
 import {
   recordDocumentHashOnChain,
   verifyOnChainRecord,
   isBlockchainAuditEnabled,
-} from '../services/blockchainService';
-import { logger } from '../utils/logger';
-import { recordAccessAndCheckMassDownload, recordAccessAndCheckSuspiciousSharing } from '../services/aiCoPilot';
+} from '../services/blockchainService.js';
+import { logger } from '../utils/logger.js';
+import { recordAccessAndCheckMassDownload, recordAccessAndCheckSuspiciousSharing } from '../services/aiCoPilot.js';
 
 const PRESIGN_TTL_SECONDS = 300; // 5 minutes — short-lived by design
 

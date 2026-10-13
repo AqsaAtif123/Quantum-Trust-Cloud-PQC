@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware/zeroTrust';
-import * as notificationsController from '../controllers/notifications.controller';
+import { requireAuth } from '../middleware/zeroTrust.js';
+import * as notificationsController from '../controllers/notifications.controller.js';
 
 const router = Router();
 

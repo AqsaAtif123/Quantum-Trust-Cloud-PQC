@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { requireAuth, requireResourceAccess } from '../middleware/zeroTrust';
-import { Payment } from '../models/Payment';
-import * as paymentsController from '../controllers/payments.controller';
+import { requireAuth, requireResourceAccess } from '../middleware/zeroTrust.js';
+import { Payment } from '../models/Payment.js';
+import * as paymentsController from '../controllers/payments.controller.js';
 
 const router = Router();
 

@@ -1,6 +1,6 @@
-import { StorageProvider } from './StorageProvider';
-import { S3CompatibleProvider } from './S3CompatibleProvider';
-import { env } from '../../config/env';
+import { StorageProvider } from './StorageProvider.js';
+import { S3CompatibleProvider } from './S3CompatibleProvider.js';
+import { env } from '../../config/env.js';
 
 let cachedProvider: StorageProvider | null = null;
 

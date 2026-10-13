@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware/zeroTrust';
-import * as foldersController from '../controllers/folders.controller';
+import { requireAuth } from '../middleware/zeroTrust.js';
+import * as foldersController from '../controllers/folders.controller.js';
 
 const router = Router();
 

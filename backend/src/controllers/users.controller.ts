@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-import { User } from '../models/User';
+import { User } from '../models/User.js';
 
 const lookupSchema = z.object({ email: z.string().email() });
 

@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
-import { env } from '../config/env';
-import { Session } from '../models/Session';
-import { Device } from '../models/Device';
-import { User } from '../models/User';
+import { env } from '../config/env.js';
+import { Session } from '../models/Session.js';
+import { Device } from '../models/Device.js';
+import { User } from '../models/User.js';
 
 export interface AccessTokenPayload {
   sub: string;

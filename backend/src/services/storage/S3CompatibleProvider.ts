@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk';
 import { Readable } from 'stream';
-import { StorageProvider, StoredObjectMeta } from './StorageProvider';
-import { env } from '../../config/env';
+import { StorageProvider, StoredObjectMeta } from './StorageProvider.js';
+import { env } from '../../config/env.js';
 
 /**
  * Works against both real AWS S3 and MinIO (self-hosted, S3-compatible),

@@ -1,7 +1,7 @@
-import { VaultDocument, computeVaultStatus } from '../models/VaultDocument';
-import { Notification } from '../models/Notification';
-import { getIO } from '../services/realtime/io';
-import { logger } from '../utils/logger';
+import { VaultDocument, computeVaultStatus } from '../models/VaultDocument.js';
+import { Notification } from '../models/Notification.js';
+import { getIO } from '../services/realtime/io.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Scans all non-trashed vault documents with an expiry date and creates a

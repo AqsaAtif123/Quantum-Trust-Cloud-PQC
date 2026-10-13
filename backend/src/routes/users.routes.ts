@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
-import { requireAuth } from '../middleware/zeroTrust';
-import * as usersController from '../controllers/users.controller';
+import { requireAuth } from '../middleware/zeroTrust.js';
+import * as usersController from '../controllers/users.controller.js';
 
 const router = Router();
 

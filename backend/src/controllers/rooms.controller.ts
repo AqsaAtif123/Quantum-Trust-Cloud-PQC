@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-import { CollaborationRoom } from '../models/CollaborationRoom';
-import { RoomMembership, RoomRole } from '../models/RoomMembership';
-import { RoomMessage } from '../models/RoomMessage';
-import { SecurityEvent } from '../models/SecurityEvent';
-import { getIO } from '../services/realtime/io';
-import { recordAccessAndCheckSuspiciousSharing } from '../services/aiCoPilot';
-import { logger } from '../utils/logger';
+import { CollaborationRoom } from '../models/CollaborationRoom.js';
+import { RoomMembership, RoomRole } from '../models/RoomMembership.js';
+import { RoomMessage } from '../models/RoomMessage.js';
+import { SecurityEvent } from '../models/SecurityEvent.js';
+import { getIO } from '../services/realtime/io.js';
+import { recordAccessAndCheckSuspiciousSharing } from '../services/aiCoPilot.js';
+import { logger } from '../utils/logger.js';
 
 const createRoomSchema = z.object({
   name: z.string().min(1).max(120),

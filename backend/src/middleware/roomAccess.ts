@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { RoomMembership, RoomRole } from '../models/RoomMembership';
-import { CollaborationRoom } from '../models/CollaborationRoom';
+import { RoomMembership, RoomRole } from '../models/RoomMembership.js';
+import { CollaborationRoom } from '../models/CollaborationRoom.js';
 
 const ROLE_RANK: Record<RoomRole, number> = {
   viewer: 0,

@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware/zeroTrust';
-import { requireRoomRole } from '../middleware/roomAccess';
-import * as roomsController from '../controllers/rooms.controller';
+import { requireAuth } from '../middleware/zeroTrust.js';
+import { requireRoomRole } from '../middleware/roomAccess.js';
+import * as roomsController from '../controllers/rooms.controller.js';
 
 const router = Router();
 

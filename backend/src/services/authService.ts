@@ -2,11 +2,11 @@ import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { authenticator } from 'otplib';
-import { env } from '../config/env';
-import { IUser } from '../models/User';
-import { Session } from '../models/Session';
-import { Device } from '../models/Device';
-import { encryptBuffer, decryptBuffer, serializeEncryptedPayload, deserializeEncryptedPayload, generateRandomKey } from './crypto/envelopeEncryption';
+import { env } from '../config/env.js';
+import { IUser } from '../models/User.js';
+import { Session } from '../models/Session.js';
+import { Device } from '../models/Device.js';
+import { encryptBuffer, decryptBuffer, serializeEncryptedPayload, deserializeEncryptedPayload, generateRandomKey } from './crypto/envelopeEncryption.js';
 
 // Argon2id parameters — memory-hard, tuned for a reasonable server cost
 // (not the mobile-friendly minimum). Tune upward as hardware allows.

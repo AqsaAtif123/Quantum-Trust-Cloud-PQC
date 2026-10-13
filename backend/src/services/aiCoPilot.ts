@@ -1,10 +1,10 @@
-import { SecurityEvent, SecurityEventType, ThreatLevel } from '../models/SecurityEvent';
-import { AccessLog, AccessAction } from '../models/AccessLog';
-import { getOrCreateSecuritySettings } from '../models/SecuritySettings';
-import { getGeoResolver, haversineDistanceKm } from './geoResolver';
-import { getIO } from './realtime/io';
-import { Notification } from '../models/Notification';
-import { logger } from '../utils/logger';
+import { SecurityEvent, SecurityEventType, ThreatLevel } from '../models/SecurityEvent.js';
+import { AccessLog, AccessAction } from '../models/AccessLog.js';
+import { getOrCreateSecuritySettings } from '../models/SecuritySettings.js';
+import { getGeoResolver, haversineDistanceKm } from './geoResolver.js';
+import { getIO } from './realtime/io.js';
+import { Notification } from '../models/Notification.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * AI SECURITY CO-PILOT

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-import { Folder } from '../models/Folder';
+import { Folder } from '../models/Folder.js';
 
 const createFolderSchema = z.object({
   name: z.string().min(1).max(255),

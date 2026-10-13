@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { requireAuth, requireResourceAccess } from '../middleware/zeroTrust';
-import { VaultDocument } from '../models/VaultDocument';
-import * as vaultController from '../controllers/vault.controller';
+import { requireAuth, requireResourceAccess } from '../middleware/zeroTrust.js';
+import { VaultDocument } from '../models/VaultDocument.js';
+import * as vaultController from '../controllers/vault.controller.js';
 
 const router = Router();
 
