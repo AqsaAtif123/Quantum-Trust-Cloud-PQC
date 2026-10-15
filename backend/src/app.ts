@@ -23,7 +23,7 @@ import notificationsRoutes from './routes/notifications.routes.js';
 
 export function createApp(): Express {
   const app = express();
-
+  app.set('trust proxy', 1);
   // Security headers (helmet covers HSTS, X-Frame-Options, X-Content-Type-Options,
   // a reasonable default CSP, etc.)
   app.use(
