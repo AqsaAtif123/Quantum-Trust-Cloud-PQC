@@ -1,0 +1,574 @@
+From e8a8de0624a1f5b56f42a5de408f0f3b67a28fe7 Mon Sep 17 00:00:00 2001
+From: root <claude@example.com>
+Date: Tue, 13 Oct 2026 09:01:49 +0000
+Subject: [PATCH 1/2] fix(backend): add .js extensions to ESM relative imports
+ for Node/Railway
+
+---
+ backend/src/controllers/auth.controller.ts     | 12 ++++++------
+ backend/src/controllers/files.controller.ts    | 18 +++++++++---------
+ backend/src/controllers/folders.controller.ts  |  2 +-
+ .../controllers/notifications.controller.ts    |  2 +-
+ backend/src/controllers/payments.controller.ts | 12 ++++++------
+ backend/src/controllers/rooms.controller.ts    | 14 +++++++-------
+ backend/src/controllers/security.controller.ts | 12 ++++++------
+ backend/src/controllers/users.controller.ts    |  2 +-
+ backend/src/controllers/vault.controller.ts    | 12 ++++++------
+ backend/src/jobs/vaultExpiryCheck.ts           |  8 ++++----
+ backend/src/middleware/errorHandler.ts         |  2 +-
+ backend/src/middleware/roomAccess.ts           |  4 ++--
+ backend/src/middleware/zeroTrust.ts            |  6 +++---
+ backend/src/routes/auth.routes.ts              |  4 ++--
+ backend/src/routes/files.routes.ts             |  6 +++---
+ backend/src/routes/folders.routes.ts           |  4 ++--
+ backend/src/routes/notifications.routes.ts     |  4 ++--
+ backend/src/routes/payments.routes.ts          |  6 +++---
+ backend/src/routes/rooms.routes.ts             |  6 +++---
+ backend/src/routes/security.routes.ts          |  4 ++--
+ backend/src/routes/users.routes.ts             |  4 ++--
+ backend/src/routes/vault.routes.ts             |  6 +++---
+ backend/src/services/aiCoPilot.ts              | 14 +++++++-------
+ backend/src/services/authService.ts            | 10 +++++-----
+ backend/src/services/blockchainService.ts      |  6 +++---
+ .../services/payments/LocalBankingProvider.ts  |  2 +-
+ .../services/payments/StablecoinProvider.ts    |  6 +++---
+ backend/src/services/payments/index.ts         |  8 ++++----
+ .../services/storage/S3CompatibleProvider.ts   |  4 ++--
+ backend/src/services/storage/index.ts          |  6 +++---
+ backend/src/services/verifyAccessToken.ts      |  8 ++++----
+ backend/src/utils/logger.ts                    |  2 +-
+ 32 files changed, 108 insertions(+), 108 deletions(-)
+
+diff --git a/backend/src/controllers/auth.controller.ts b/backend/src/controllers/auth.controller.ts
+index 09d0deb..fbf98db 100644
+--- a/backend/src/controllers/auth.controller.ts
++++ b/backend/src/controllers/auth.controller.ts
+@@ -1,9 +1,9 @@
+ import { Request, Response } from 'express';
+ import { z } from 'zod';
+-import { User } from '../models/User';
+-import { Session } from '../models/Session';
+-import { SecurityEvent } from '../models/SecurityEvent';
+-import { evaluateNewDeviceLogin, evaluateImpossibleTravel } from '../services/aiCoPilot';
++import { User } from '../models/User.js';
++import { Session } from '../models/Session.js';
++import { SecurityEvent } from '../models/SecurityEvent.js';
++import { evaluateNewDeviceLogin, evaluateImpossibleTravel } from '../services/aiCoPilot.js';
+ import {
+   hashPassword,
+   verifyPassword,
+@@ -14,8 +14,8 @@ import {
+   verifyMfaToken,
+   encryptServerMetadata,
+   decryptServerMetadata,
+-} from '../services/authService';
+-import { logger } from '../utils/logger';
++} from '../services/authService.js';
++import { logger } from '../utils/logger.js';
+ 
+ const registerSchema = z.object({
+   email: z.string().email(),
+diff --git a/backend/src/controllers/files.controller.ts b/backend/src/controllers/files.controller.ts
+index fb3faa8..fd705cf 100644
+--- a/backend/src/controllers/files.controller.ts
++++ b/backend/src/controllers/files.controller.ts
+@@ -1,19 +1,19 @@
+ import { Request, Response } from 'express';
+ import { v4 as uuid } from 'uuid';
+ import { z } from 'zod';
+-import { FileModel } from '../models/File';
+-import { FileVersion } from '../models/FileVersion';
+-import { SecurityEvent } from '../models/SecurityEvent';
+-import { Permission } from '../models/Permission';
+-import { FileShareKey } from '../models/FileShareKey';
+-import { getStorageProvider } from '../services/storage';
++import { FileModel } from '../models/File.js';
++import { FileVersion } from '../models/FileVersion.js';
++import { SecurityEvent } from '../models/SecurityEvent.js';
++import { Permission } from '../models/Permission.js';
++import { FileShareKey } from '../models/FileShareKey.js';
++import { getStorageProvider } from '../services/storage/index.js';
+ import {
+   recordDocumentHashOnChain,
+   verifyOnChainRecord,
+   isBlockchainAuditEnabled,
+-} from '../services/blockchainService';
+-import { logger } from '../utils/logger';
+-import { recordAccessAndCheckMassDownload, recordAccessAndCheckSuspiciousSharing } from '../services/aiCoPilot';
++} from '../services/blockchainService.js';
++import { logger } from '../utils/logger.js';
++import { recordAccessAndCheckMassDownload, recordAccessAndCheckSuspiciousSharing } from '../services/aiCoPilot.js';
+ 
+ const PRESIGN_TTL_SECONDS = 300; // 5 minutes — short-lived by design
+ 
+diff --git a/backend/src/controllers/folders.controller.ts b/backend/src/controllers/folders.controller.ts
+index 5fe8fe2..27247dc 100644
+--- a/backend/src/controllers/folders.controller.ts
++++ b/backend/src/controllers/folders.controller.ts
+@@ -1,6 +1,6 @@
+ import { Request, Response } from 'express';
+ import { z } from 'zod';
+-import { Folder } from '../models/Folder';
++import { Folder } from '../models/Folder.js';
+ 
+ const createFolderSchema = z.object({
+   name: z.string().min(1).max(255),
+diff --git a/backend/src/controllers/notifications.controller.ts b/backend/src/controllers/notifications.controller.ts
+index 61fe710..9cc19d7 100644
+--- a/backend/src/controllers/notifications.controller.ts
++++ b/backend/src/controllers/notifications.controller.ts
+@@ -1,5 +1,5 @@
+ import { Request, Response } from 'express';
+-import { Notification } from '../models/Notification';
++import { Notification } from '../models/Notification.js';
+ 
+ export async function listNotifications(req: Request, res: Response): Promise<void> {
+   const unreadOnly = req.query.unreadOnly === 'true';
+diff --git a/backend/src/controllers/payments.controller.ts b/backend/src/controllers/payments.controller.ts
+index 8d5edd3..a80ef9b 100644
+--- a/backend/src/controllers/payments.controller.ts
++++ b/backend/src/controllers/payments.controller.ts
+@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
+ import { v4 as uuid } from 'uuid';
+ import { z } from 'zod';
+ import { keccak256, toUtf8Bytes } from 'ethers';
+-import { Payment, PaymentProviderName } from '../models/Payment';
+-import { getPaymentProvider, listAvailableProviders } from '../services/payments';
+-import { recordPaymentReferenceOnChain, isBlockchainAuditEnabled } from '../services/blockchainService';
+-import { Notification } from '../models/Notification';
+-import { getIO } from '../services/realtime/io';
+-import { logger } from '../utils/logger';
++import { Payment, PaymentProviderName } from '../models/Payment.js';
++import { getPaymentProvider, listAvailableProviders } from '../services/payments/index.js';
++import { recordPaymentReferenceOnChain, isBlockchainAuditEnabled } from '../services/blockchainService.js';
++import { Notification } from '../models/Notification.js';
++import { getIO } from '../services/realtime/io.js';
++import { logger } from '../utils/logger.js';
+ 
+ const PAYMENT_EXPIRY_MINUTES = 30;
+ 
+diff --git a/backend/src/controllers/rooms.controller.ts b/backend/src/controllers/rooms.controller.ts
+index e8208ab..742e771 100644
+--- a/backend/src/controllers/rooms.controller.ts
++++ b/backend/src/controllers/rooms.controller.ts
+@@ -1,12 +1,12 @@
+ import { Request, Response } from 'express';
+ import { z } from 'zod';
+-import { CollaborationRoom } from '../models/CollaborationRoom';
+-import { RoomMembership, RoomRole } from '../models/RoomMembership';
+-import { RoomMessage } from '../models/RoomMessage';
+-import { SecurityEvent } from '../models/SecurityEvent';
+-import { getIO } from '../services/realtime/io';
+-import { recordAccessAndCheckSuspiciousSharing } from '../services/aiCoPilot';
+-import { logger } from '../utils/logger';
++import { CollaborationRoom } from '../models/CollaborationRoom.js';
++import { RoomMembership, RoomRole } from '../models/RoomMembership.js';
++import { RoomMessage } from '../models/RoomMessage.js';
++import { SecurityEvent } from '../models/SecurityEvent.js';
++import { getIO } from '../services/realtime/io.js';
++import { recordAccessAndCheckSuspiciousSharing } from '../services/aiCoPilot.js';
++import { logger } from '../utils/logger.js';
+ 
+ const createRoomSchema = z.object({
+   name: z.string().min(1).max(120),
+diff --git a/backend/src/controllers/security.controller.ts b/backend/src/controllers/security.controller.ts
+index 060bbc9..906f3d0 100644
+--- a/backend/src/controllers/security.controller.ts
++++ b/backend/src/controllers/security.controller.ts
+@@ -1,11 +1,11 @@
+ import { Request, Response } from 'express';
+ import { z } from 'zod';
+-import { User } from '../models/User';
+-import { Session } from '../models/Session';
+-import { Device } from '../models/Device';
+-import { SecurityEvent } from '../models/SecurityEvent';
+-import { SecuritySettings, getOrCreateSecuritySettings } from '../models/SecuritySettings';
+-import { isBlockchainAuditEnabled } from '../services/blockchainService';
++import { User } from '../models/User.js';
++import { Session } from '../models/Session.js';
++import { Device } from '../models/Device.js';
++import { SecurityEvent } from '../models/SecurityEvent.js';
++import { SecuritySettings, getOrCreateSecuritySettings } from '../models/SecuritySettings.js';
++import { isBlockchainAuditEnabled } from '../services/blockchainService.js';
+ 
+ /**
+  * Aggregates real state from across the system into one Security Center
+diff --git a/backend/src/controllers/users.controller.ts b/backend/src/controllers/users.controller.ts
+index 399da2e..402d616 100644
+--- a/backend/src/controllers/users.controller.ts
++++ b/backend/src/controllers/users.controller.ts
+@@ -1,6 +1,6 @@
+ import { Request, Response } from 'express';
+ import { z } from 'zod';
+-import { User } from '../models/User';
++import { User } from '../models/User.js';
+ 
+ const lookupSchema = z.object({ email: z.string().email() });
+ 
+diff --git a/backend/src/controllers/vault.controller.ts b/backend/src/controllers/vault.controller.ts
+index 1cd62ad..9bc8a70 100644
+--- a/backend/src/controllers/vault.controller.ts
++++ b/backend/src/controllers/vault.controller.ts
+@@ -2,16 +2,16 @@ import { Request, Response } from 'express';
+ import { v4 as uuid } from 'uuid';
+ import { z } from 'zod';
+ import crypto from 'crypto';
+-import { VaultDocument, computeVaultStatus } from '../models/VaultDocument';
+-import { User } from '../models/User';
+-import { getStorageProvider } from '../services/storage';
+-import { verifySignature as verifyMlDsaSignature } from '../services/crypto/pqc';
++import { VaultDocument, computeVaultStatus } from '../models/VaultDocument.js';
++import { User } from '../models/User.js';
++import { getStorageProvider } from '../services/storage/index.js';
++import { verifySignature as verifyMlDsaSignature } from '../services/crypto/pqc.js';
+ import {
+   recordNotarizationOnChain,
+   verifyOnChainRecord,
+   isBlockchainAuditEnabled,
+-} from '../services/blockchainService';
+-import { logger } from '../utils/logger';
++} from '../services/blockchainService.js';
++import { logger } from '../utils/logger.js';
+ 
+ const PRESIGN_TTL_SECONDS = 300;
+ 
+diff --git a/backend/src/jobs/vaultExpiryCheck.ts b/backend/src/jobs/vaultExpiryCheck.ts
+index 69d35db..e2b4bbd 100644
+--- a/backend/src/jobs/vaultExpiryCheck.ts
++++ b/backend/src/jobs/vaultExpiryCheck.ts
+@@ -1,7 +1,7 @@
+-import { VaultDocument, computeVaultStatus } from '../models/VaultDocument';
+-import { Notification } from '../models/Notification';
+-import { getIO } from '../services/realtime/io';
+-import { logger } from '../utils/logger';
++import { VaultDocument, computeVaultStatus } from '../models/VaultDocument.js';
++import { Notification } from '../models/Notification.js';
++import { getIO } from '../services/realtime/io.js';
++import { logger } from '../utils/logger.js';
+ 
+ /**
+  * Scans all non-trashed vault documents with an expiry date and creates a
+diff --git a/backend/src/middleware/errorHandler.ts b/backend/src/middleware/errorHandler.ts
+index f3f7b47..ec70f84 100644
+--- a/backend/src/middleware/errorHandler.ts
++++ b/backend/src/middleware/errorHandler.ts
+@@ -1,5 +1,5 @@
+ import { Request, Response, NextFunction } from 'express';
+-import { logger } from '../utils/logger';
++import { logger } from '../utils/logger.js';
+ 
+ export function notFoundHandler(req: Request, res: Response): void {
+   res.status(404).json({ error: 'ROUTE_NOT_FOUND' });
+diff --git a/backend/src/middleware/roomAccess.ts b/backend/src/middleware/roomAccess.ts
+index 3abac4f..f7880be 100644
+--- a/backend/src/middleware/roomAccess.ts
++++ b/backend/src/middleware/roomAccess.ts
+@@ -1,6 +1,6 @@
+ import { Request, Response, NextFunction } from 'express';
+-import { RoomMembership, RoomRole } from '../models/RoomMembership';
+-import { CollaborationRoom } from '../models/CollaborationRoom';
++import { RoomMembership, RoomRole } from '../models/RoomMembership.js';
++import { CollaborationRoom } from '../models/CollaborationRoom.js';
+ 
+ const ROLE_RANK: Record<RoomRole, number> = {
+   viewer: 0,
+diff --git a/backend/src/middleware/zeroTrust.ts b/backend/src/middleware/zeroTrust.ts
+index f9dc782..5007f54 100644
+--- a/backend/src/middleware/zeroTrust.ts
++++ b/backend/src/middleware/zeroTrust.ts
+@@ -1,7 +1,7 @@
+ import { Request, Response, NextFunction } from 'express';
+-import { verifyAccessToken } from '../services/verifyAccessToken';
+-import { Session } from '../models/Session';
+-import { logger } from '../utils/logger';
++import { verifyAccessToken } from '../services/verifyAccessToken.js';
++import { Session } from '../models/Session.js';
++import { logger } from '../utils/logger.js';
+ 
+ /**
+  * ZERO-TRUST AUTHORIZATION CONTEXT
+diff --git a/backend/src/routes/auth.routes.ts b/backend/src/routes/auth.routes.ts
+index 3a93427..dac0888 100644
+--- a/backend/src/routes/auth.routes.ts
++++ b/backend/src/routes/auth.routes.ts
+@@ -1,7 +1,7 @@
+ import { Router } from 'express';
+ import rateLimit from 'express-rate-limit';
+-import * as authController from '../controllers/auth.controller';
+-import { requireAuth } from '../middleware/zeroTrust';
++import * as authController from '../controllers/auth.controller.js';
++import { requireAuth } from '../middleware/zeroTrust.js';
+ 
+ const router = Router();
+ 
+diff --git a/backend/src/routes/files.routes.ts b/backend/src/routes/files.routes.ts
+index 8cb8df2..10ca8fb 100644
+--- a/backend/src/routes/files.routes.ts
++++ b/backend/src/routes/files.routes.ts
+@@ -1,7 +1,7 @@
+ import { Router } from 'express';
+-import { requireAuth, requireResourceAccess } from '../middleware/zeroTrust';
+-import { FileModel } from '../models/File';
+-import * as filesController from '../controllers/files.controller';
++import { requireAuth, requireResourceAccess } from '../middleware/zeroTrust.js';
++import { FileModel } from '../models/File.js';
++import * as filesController from '../controllers/files.controller.js';
+ 
+ const router = Router();
+ 
+diff --git a/backend/src/routes/folders.routes.ts b/backend/src/routes/folders.routes.ts
+index 05f3ad8..56b078e 100644
+--- a/backend/src/routes/folders.routes.ts
++++ b/backend/src/routes/folders.routes.ts
+@@ -1,6 +1,6 @@
+ import { Router } from 'express';
+-import { requireAuth } from '../middleware/zeroTrust';
+-import * as foldersController from '../controllers/folders.controller';
++import { requireAuth } from '../middleware/zeroTrust.js';
++import * as foldersController from '../controllers/folders.controller.js';
+ 
+ const router = Router();
+ 
+diff --git a/backend/src/routes/notifications.routes.ts b/backend/src/routes/notifications.routes.ts
+index 83a34ab..ed4e8b1 100644
+--- a/backend/src/routes/notifications.routes.ts
++++ b/backend/src/routes/notifications.routes.ts
+@@ -1,6 +1,6 @@
+ import { Router } from 'express';
+-import { requireAuth } from '../middleware/zeroTrust';
+-import * as notificationsController from '../controllers/notifications.controller';
++import { requireAuth } from '../middleware/zeroTrust.js';
++import * as notificationsController from '../controllers/notifications.controller.js';
+ 
+ const router = Router();
+ 
+diff --git a/backend/src/routes/payments.routes.ts b/backend/src/routes/payments.routes.ts
+index 4eca488..1956087 100644
+--- a/backend/src/routes/payments.routes.ts
++++ b/backend/src/routes/payments.routes.ts
+@@ -1,7 +1,7 @@
+ import { Router } from 'express';
+-import { requireAuth, requireResourceAccess } from '../middleware/zeroTrust';
+-import { Payment } from '../models/Payment';
+-import * as paymentsController from '../controllers/payments.controller';
++import { requireAuth, requireResourceAccess } from '../middleware/zeroTrust.js';
++import { Payment } from '../models/Payment.js';
++import * as paymentsController from '../controllers/payments.controller.js';
+ 
+ const router = Router();
+ 
+diff --git a/backend/src/routes/rooms.routes.ts b/backend/src/routes/rooms.routes.ts
+index c9ac4a5..9a12824 100644
+--- a/backend/src/routes/rooms.routes.ts
++++ b/backend/src/routes/rooms.routes.ts
+@@ -1,7 +1,7 @@
+ import { Router } from 'express';
+-import { requireAuth } from '../middleware/zeroTrust';
+-import { requireRoomRole } from '../middleware/roomAccess';
+-import * as roomsController from '../controllers/rooms.controller';
++import { requireAuth } from '../middleware/zeroTrust.js';
++import { requireRoomRole } from '../middleware/roomAccess.js';
++import * as roomsController from '../controllers/rooms.controller.js';
+ 
+ const router = Router();
+ 
+diff --git a/backend/src/routes/security.routes.ts b/backend/src/routes/security.routes.ts
+index 347069f..9ead32c 100644
+--- a/backend/src/routes/security.routes.ts
++++ b/backend/src/routes/security.routes.ts
+@@ -1,6 +1,6 @@
+ import { Router } from 'express';
+-import { requireAuth } from '../middleware/zeroTrust';
+-import * as securityController from '../controllers/security.controller';
++import { requireAuth } from '../middleware/zeroTrust.js';
++import * as securityController from '../controllers/security.controller.js';
+ 
+ const router = Router();
+ 
+diff --git a/backend/src/routes/users.routes.ts b/backend/src/routes/users.routes.ts
+index 7752d76..d9f2fbf 100644
+--- a/backend/src/routes/users.routes.ts
++++ b/backend/src/routes/users.routes.ts
+@@ -1,7 +1,7 @@
+ import { Router } from 'express';
+ import rateLimit from 'express-rate-limit';
+-import { requireAuth } from '../middleware/zeroTrust';
+-import * as usersController from '../controllers/users.controller';
++import { requireAuth } from '../middleware/zeroTrust.js';
++import * as usersController from '../controllers/users.controller.js';
+ 
+ const router = Router();
+ 
+diff --git a/backend/src/routes/vault.routes.ts b/backend/src/routes/vault.routes.ts
+index 0e1643a..68dc408 100644
+--- a/backend/src/routes/vault.routes.ts
++++ b/backend/src/routes/vault.routes.ts
+@@ -1,7 +1,7 @@
+ import { Router } from 'express';
+-import { requireAuth, requireResourceAccess } from '../middleware/zeroTrust';
+-import { VaultDocument } from '../models/VaultDocument';
+-import * as vaultController from '../controllers/vault.controller';
++import { requireAuth, requireResourceAccess } from '../middleware/zeroTrust.js';
++import { VaultDocument } from '../models/VaultDocument.js';
++import * as vaultController from '../controllers/vault.controller.js';
+ 
+ const router = Router();
+ 
+diff --git a/backend/src/services/aiCoPilot.ts b/backend/src/services/aiCoPilot.ts
+index 0cfb368..471c0bd 100644
+--- a/backend/src/services/aiCoPilot.ts
++++ b/backend/src/services/aiCoPilot.ts
+@@ -1,10 +1,10 @@
+-import { SecurityEvent, SecurityEventType, ThreatLevel } from '../models/SecurityEvent';
+-import { AccessLog, AccessAction } from '../models/AccessLog';
+-import { getOrCreateSecuritySettings } from '../models/SecuritySettings';
+-import { getGeoResolver, haversineDistanceKm } from './geoResolver';
+-import { getIO } from './realtime/io';
+-import { Notification } from '../models/Notification';
+-import { logger } from '../utils/logger';
++import { SecurityEvent, SecurityEventType, ThreatLevel } from '../models/SecurityEvent.js';
++import { AccessLog, AccessAction } from '../models/AccessLog.js';
++import { getOrCreateSecuritySettings } from '../models/SecuritySettings.js';
++import { getGeoResolver, haversineDistanceKm } from './geoResolver.js';
++import { getIO } from './realtime/io.js';
++import { Notification } from '../models/Notification.js';
++import { logger } from '../utils/logger.js';
+ 
+ /**
+  * AI SECURITY CO-PILOT
+diff --git a/backend/src/services/authService.ts b/backend/src/services/authService.ts
+index c14adbe..4cfa45a 100644
+--- a/backend/src/services/authService.ts
++++ b/backend/src/services/authService.ts
+@@ -2,11 +2,11 @@ import argon2 from 'argon2';
+ import jwt from 'jsonwebtoken';
+ import crypto from 'crypto';
+ import { authenticator } from 'otplib';
+-import { env } from '../config/env';
+-import { IUser } from '../models/User';
+-import { Session } from '../models/Session';
+-import { Device } from '../models/Device';
+-import { encryptBuffer, decryptBuffer, serializeEncryptedPayload, deserializeEncryptedPayload, generateRandomKey } from './crypto/envelopeEncryption';
++import { env } from '../config/env.js';
++import { IUser } from '../models/User.js';
++import { Session } from '../models/Session.js';
++import { Device } from '../models/Device.js';
++import { encryptBuffer, decryptBuffer, serializeEncryptedPayload, deserializeEncryptedPayload, generateRandomKey } from './crypto/envelopeEncryption.js';
+ 
+ // Argon2id parameters — memory-hard, tuned for a reasonable server cost
+ // (not the mobile-friendly minimum). Tune upward as hardware allows.
+diff --git a/backend/src/services/blockchainService.ts b/backend/src/services/blockchainService.ts
+index d75db96..22ba4be 100644
+--- a/backend/src/services/blockchainService.ts
++++ b/backend/src/services/blockchainService.ts
+@@ -1,7 +1,7 @@
+ import { ethers } from 'ethers';
+-import { env } from '../config/env';
+-import { logger } from '../utils/logger';
+-import auditContractArtifact from '../contracts/QuantumTrustAuditLog.json';
++import { env } from '../config/env.js';
++import { logger } from '../utils/logger.js';
++import auditContractArtifact from '../contracts/QuantumTrustAuditLog.json' with { type: 'json' };
+ 
+ /**
+  * BLOCKCHAIN AUDIT LOGGING
+diff --git a/backend/src/services/payments/LocalBankingProvider.ts b/backend/src/services/payments/LocalBankingProvider.ts
+index 9cc612c..8c4b08d 100644
+--- a/backend/src/services/payments/LocalBankingProvider.ts
++++ b/backend/src/services/payments/LocalBankingProvider.ts
+@@ -1,4 +1,4 @@
+-import { PaymentProvider, CreatePaymentResult, VerifyPaymentResult } from './PaymentProvider';
++import { PaymentProvider, CreatePaymentResult, VerifyPaymentResult } from './PaymentProvider.js';
+ 
+ /**
+  * Structural placeholder for a regional/local banking payment gateway
+diff --git a/backend/src/services/payments/StablecoinProvider.ts b/backend/src/services/payments/StablecoinProvider.ts
+index d7330c2..5c454cc 100644
+--- a/backend/src/services/payments/StablecoinProvider.ts
++++ b/backend/src/services/payments/StablecoinProvider.ts
+@@ -1,7 +1,7 @@
+ import { ethers } from 'ethers';
+-import { env } from '../../config/env';
+-import { logger } from '../../utils/logger';
+-import { PaymentProvider, CreatePaymentResult, VerifyPaymentResult } from './PaymentProvider';
++import { env } from '../../config/env.js';
++import { logger } from '../../utils/logger.js';
++import { PaymentProvider, CreatePaymentResult, VerifyPaymentResult } from './PaymentProvider.js';
+ 
+ const MIN_CONFIRMATIONS = 3;
+ 
+diff --git a/backend/src/services/payments/index.ts b/backend/src/services/payments/index.ts
+index ea3eeed..8adaf65 100644
+--- a/backend/src/services/payments/index.ts
++++ b/backend/src/services/payments/index.ts
+@@ -1,7 +1,7 @@
+-import { PaymentProvider } from './PaymentProvider';
+-import { StablecoinProvider } from './StablecoinProvider';
+-import { LocalBankingProvider } from './LocalBankingProvider';
+-import { PaymentProviderName } from '../../models/Payment';
++import { PaymentProvider } from './PaymentProvider.js';
++import { StablecoinProvider } from './StablecoinProvider.js';
++import { LocalBankingProvider } from './LocalBankingProvider.js';
++import { PaymentProviderName } from '../../models/Payment.js';
+ 
+ const providers: Record<PaymentProviderName, PaymentProvider> = {
+   stablecoin: new StablecoinProvider(),
+diff --git a/backend/src/services/storage/S3CompatibleProvider.ts b/backend/src/services/storage/S3CompatibleProvider.ts
+index 8571ac8..c2a1539 100644
+--- a/backend/src/services/storage/S3CompatibleProvider.ts
++++ b/backend/src/services/storage/S3CompatibleProvider.ts
+@@ -1,7 +1,7 @@
+ import AWS from 'aws-sdk';
+ import { Readable } from 'stream';
+-import { StorageProvider, StoredObjectMeta } from './StorageProvider';
+-import { env } from '../../config/env';
++import { StorageProvider, StoredObjectMeta } from './StorageProvider.js';
++import { env } from '../../config/env.js';
+ 
+ /**
+  * Works against both real AWS S3 and MinIO (self-hosted, S3-compatible),
+diff --git a/backend/src/services/storage/index.ts b/backend/src/services/storage/index.ts
+index 4911a7b..85789aa 100644
+--- a/backend/src/services/storage/index.ts
++++ b/backend/src/services/storage/index.ts
+@@ -1,6 +1,6 @@
+-import { StorageProvider } from './StorageProvider';
+-import { S3CompatibleProvider } from './S3CompatibleProvider';
+-import { env } from '../../config/env';
++import { StorageProvider } from './StorageProvider.js';
++import { S3CompatibleProvider } from './S3CompatibleProvider.js';
++import { env } from '../../config/env.js';
+ 
+ let cachedProvider: StorageProvider | null = null;
+ 
+diff --git a/backend/src/services/verifyAccessToken.ts b/backend/src/services/verifyAccessToken.ts
+index c85718b..9970b6e 100644
+--- a/backend/src/services/verifyAccessToken.ts
++++ b/backend/src/services/verifyAccessToken.ts
+@@ -1,8 +1,8 @@
+ import jwt from 'jsonwebtoken';
+-import { env } from '../config/env';
+-import { Session } from '../models/Session';
+-import { Device } from '../models/Device';
+-import { User } from '../models/User';
++import { env } from '../config/env.js';
++import { Session } from '../models/Session.js';
++import { Device } from '../models/Device.js';
++import { User } from '../models/User.js';
+ 
+ export interface AccessTokenPayload {
+   sub: string;
+diff --git a/backend/src/utils/logger.ts b/backend/src/utils/logger.ts
+index 6af07cb..b28d020 100644
+--- a/backend/src/utils/logger.ts
++++ b/backend/src/utils/logger.ts
+@@ -1,5 +1,5 @@
+ import pino from 'pino';
+-import { env } from '../config/env';
++import { env } from '../config/env.js';
+ 
+ export const logger = pino({
+   level: env.NODE_ENV === 'production' ? 'info' : 'debug',
+-- 
+2.43.0
+
