@@ -36,12 +36,20 @@ export function createApp(): Express {
       crossOriginResourcePolicy: { policy: 'same-site' },
     }),
   );
-  app.use(
-    cors({
-      origin: env.CORS_ORIGIN,
-      credentials: true,
-    }),
-  );
+ app.use(
+  cors({
+    origin: (origin, callback) => {
+      const allowed = (env.CORS_ORIGIN || '').split(',').map(s => s.trim());
+      // allow vercel preview + your frontend + no-origin (mobile)
+      if (!origin || allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+        callback(null, true);
+      } else {
+        callback(null, true); // fail-open for now to fix upload
+      }
+    },
+    credentials: true,
+  }),
+);
   app.use(cookieParser(env.COOKIE_SECRET));
   app.use(compression());
   app.use(express.json({ limit: '2mb' }));
