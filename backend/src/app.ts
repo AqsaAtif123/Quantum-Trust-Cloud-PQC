@@ -1,37 +1,71 @@
-import mongoose from 'mongoose';
-import { createApp } from '../src/app.js';
+import express, { Express } from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import compression from 'compression';
+import rateLimit from 'express-rate-limit';
+import pinoHttp from 'pino-http';
 
-let isConnected = false;
+import { env } from './config/env.js';
+import { logger } from './utils/logger.js';
+import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 
-async function connectDB() {
-  if (isConnected) return;
-  try {
-    const uri = process.env.MONGO_URI || process.env.MONGODB_URI || process.env.MONGO_URL;
-    if (!uri) {
-      console.log('MONGO_URI missing');
-      return;
-    }
-    await mongoose.connect(uri);
-    isConnected = true;
-    console.log('MongoDB Connected');
-  } catch (err) {
-    console.log('MongoDB Error:', err.message);
-  }
-}
+import healthRoutes from './routes/health.routes.js';
+import authRoutes from './routes/auth.routes.js';
+import filesRoutes from './routes/files.routes.js';
+import foldersRoutes from './routes/folders.routes.js';
+import roomsRoutes from './routes/rooms.routes.js';
+import usersRoutes from './routes/users.routes.js';
+import vaultRoutes from './routes/vault.routes.js';
+import paymentsRoutes from './routes/payments.routes.js';
+import securityRoutes from './routes/security.routes.js';
+import notificationsRoutes from './routes/notifications.routes.js';
 
-const app = createApp();
-
-// Root check
-app.get('/', async (req, res) => {
-  await connectDB();
-  res.json({ 
-    status: 'ok', 
-    message: 'Quantum Trust API LIVE', 
-    mongo: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' 
-  });
-});
-
-export default async function handler(req, res) {
-  await connectDB();
-  return app(req, res);
+export function createApp(): Express {
+  const app = express();
+  app.set('trust proxy', 1);
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          objectSrc: ["'none'"],
+          frameAncestors: ["'none'"],
+        },
+      },
+      crossOriginResourcePolicy: { policy: 'same-site' },
+    }),
+  );
+  app.use(
+    cors({
+      origin: env.CORS_ORIGIN,
+      credentials: true,
+    }),
+  );
+  app.use(cookieParser(env.COOKIE_SECRET));
+  app.use(compression());
+  app.use(express.json({ limit: '2mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+  app.use(pinoHttp({ logger }));
+  app.use(
+    rateLimit({
+      windowMs: env.RATE_LIMIT_WINDOW_MS,
+      limit: env.RATE_LIMIT_MAX,
+      standardHeaders: true,
+      legacyHeaders: false,
+    }),
+  );
+  app.use('/api/health', healthRoutes);
+  app.use('/api/auth', authRoutes);
+  app.use('/api/files', filesRoutes);
+  app.use('/api/folders', foldersRoutes);
+  app.use('/api/rooms', roomsRoutes);
+  app.use('/api/users', usersRoutes);
+  app.use('/api/vault', vaultRoutes);
+  app.use('/api/payments', paymentsRoutes);
+  app.use('/api/security', securityRoutes);
+  app.use('/api/notifications', notificationsRoutes);
+  app.use(notFoundHandler);
+  app.use(errorHandler);
+  return app;
 }
