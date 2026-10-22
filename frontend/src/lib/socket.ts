@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import { useAuthStore } from '../store/authStore';
 
 const apiOrigin = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '');
+const enableSocket = import.meta.env.VITE_ENABLE_SOCKET !== 'false';
 
 /**
- * One shared socket per session, authenticated the same way as REST calls
- * (the in-memory access token — see authStore.ts for why it's not
- * persisted to storage). The server verifies this token identically to
- * HTTP requests (see backend server.ts's io.use handshake middleware).
+ * One shared socket per session.
+ * On Vercel we disable it via VITE_ENABLE_SOCKET=false to avoid 404 polling spam.
+ * File upload / file list will still work via REST API.
  */
 let sharedSocket: Socket | null = null;
 
@@ -17,24 +17,31 @@ export function useSocket(): Socket | null {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
+    if (!enableSocket) return undefined;
     if (!accessToken) return undefined;
 
-    if (!sharedSocket) {
-      sharedSocket = io(apiOrigin || undefined, {
-        path: '/socket.io',
-        auth: { token: accessToken },
-        withCredentials: true,
-      });
-    }
-    socketRef.current = sharedSocket;
+    // Dynamic import so build doesn't break when disabled
+    const init = async () => {
+      if (!sharedSocket) {
+        const { io } = await import('socket.io-client');
+        sharedSocket = io(apiOrigin || undefined, {
+          path: '/socket.io',
+          auth: { token: accessToken },
+          withCredentials: true,
+          autoConnect: true,
+          transports: ['polling', 'websocket'],
+        });
+      }
+      socketRef.current = sharedSocket;
+    };
+    init();
 
     return () => {
-      // Deliberately not disconnecting on unmount: other components (e.g.
-      // notifications) may still need the shared connection. Disconnection
-      // happens on logout instead (see authStore.clear callers).
+      // keep connection alive for notifications
     };
   }, [accessToken]);
 
+  if (!enableSocket) return null;
   return socketRef.current;
 }
 
